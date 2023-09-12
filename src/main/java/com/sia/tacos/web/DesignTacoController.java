@@ -1,12 +1,11 @@
 // tag::head[]
 package com.sia.tacos.web;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.sia.tacos.data.jdbc.IngredientRepository;
-import com.sia.tacos.data.jdbc.JdbcIngredientRepository;
 import com.sia.tacos.domain.Ingredient;
 import com.sia.tacos.domain.Taco;
 import com.sia.tacos.domain.TacoOrder;
@@ -34,7 +33,8 @@ public class DesignTacoController {
 
     @ModelAttribute
     public void addIngredientsToModel(Model model) {
-        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredientRepository.findAll().forEach(i -> ingredients.add(i));
 
         Type[] types = Ingredient.Type.values();
         for (Type type : types) {
@@ -75,9 +75,9 @@ public class DesignTacoController {
     }
 
     private Iterable<Ingredient> filterByType(
-            Iterable<Ingredient> ingredients, Type type) {
-        return StreamSupport
-                .stream(ingredients.spliterator(), false)
+            List<Ingredient> ingredients, Type type) {
+        return ingredients
+                .stream()
                 .filter(x -> x.getType().equals(type))
                 .collect(Collectors.toList());
     }
